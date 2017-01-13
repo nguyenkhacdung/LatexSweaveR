@@ -52,7 +52,7 @@ indésirables médicamenteux au Vietnam}
 <<echo=F,message=F, warning=F>>=
       library(ggplot2)
       library(dplyr)
-
+load(file = "WorkingSpace.Database2010-2015.Rdata.RData")
 @
 %-------------------------------------------------------------
 %     Table of Content               
@@ -139,45 +139,58 @@ Compare database Vietnam and France 2010-2015 to address the asymmetry of  struc
 %-------------------------------------------------------------
 \begin{frame}{Number of reports per/Year in Vietnam 2010-2015}
   % \includegraphics[height=8cm]{20102015SeverityPercentage.png}
-
-<<fig=T,echo=F,fig.align="right",out.width="77%">>=
+    \begin{columns}
+      \begin{column}{0.3\textwidth}
+         \textbf{Tendancy of reporting : Positive}
+      \end{column}
+      \begin{column}{0.85\textwidth} 
       
-
-p=read.csv2("Database 2010-2015.Year.Region.Month.csv")%>% mutate(Year=Year+2000) %>% 
-ggplot(aes(as.factor(Year)))+ geom_bar(fill="darkred")+
-  xlab ("Reporting Number" )+ ylab (NULL)+
-  theme_bw()+
-  geom_text(aes(y=..count.., label=..count..),stat="count", color="darkblue",
-            size=4.5,vjust = -0.5)
-print(p)
- 
-@
-       
-\end{frame}
-%-------------------------------------------------------------
-\begin{frame}{Tesst}
- <<par-hook, cache = FALSE>>=
-knit_hooks$set(pars = function(before, options, envir) {
-  if (before) graphics::par(options$pars)
-})
-@
-
-<<use-pars, pars = list(mar=c(4, 4, .1, .1), mgp=c(2, 1, 0))>>=
-plot(mtcars[, 1:2])
-@
-<<setup, cache = FALSE>>=
-opts_knit$set(eval.after = 'fig.cap') # evaluate fig.cap after the chunk
-@
-
-<<t-test, fig.cap = paste("The P-value is", t.test(x)$p.value)>>=
-x = rnorm(100)
-boxplot(x)
-@
+        <<fig=T,echo=F,fig.align="right",out.width="77%">>=
+      print(
+          read.csv2("Database 2010-2015.Year.Region.Month.csv")%>% mutate(Year=Year+2000) %>% 
+        ggplot(aes(as.factor(Year)))+ geom_bar(fill="darkred")+
+          xlab ("Reporting Number" )+ ylab (NULL)+
+          theme_bw()+
+          geom_text(aes(y=..count.., label=..count..),stat="count", color="darkblue",
+                    size=4.5,vjust = -0.5)
+        )
+        @
+        
+      \end{column}
+    \end{columns}
 
 \end{frame}
 %-------------------------------------------------------------
-\begin{frame}{Comparison vietnamese and french database 2010-2015}
+\begin{frame}{Number of reports per/Year in Vietnam 2010-2015}
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+         \textbf{Tendancy of reporting/month }
+         <<fig=T,echo=F,fig.align="right",out.width="77%">>=
+
+  t.serie=read.csv2("Database 2010-2015.Year.Region.Month.csv") %>% 
+  do(
+    data.frame(table(Year=.$Year,Month=.$Month))
+    ) %>% arrange(Year) %>% 
+  select(Freq) %>% ts(.,start = c(2010,1),frequency = 12)
+  plot(t.serie)
+  abline(reg=lm(t.serie~time(t.serie)),col=2,lwd=2)
+@
+      \end{column}
+      \begin{column}{0.6\textwidth} 
+
+ <<fig=T,echo=F,fig.align="right">>=
+  boxplot(t.serie~cycle(t.serie))
+  @
+ \end{column}
+    \end{columns}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Description gender-age in vietnamese database 2010-2015}
  
+<<>>=
+plot(DrugName)
+@
 
 
 \end{frame}
