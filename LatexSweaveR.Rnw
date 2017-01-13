@@ -1,29 +1,200 @@
 %Sys.which("pdflatex") 
 %Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Users/utilisateur/OneDrive - univ-tlse3.fr/Documents-UPS/LaTex/texmfs/install/miktex/bin", sep=.Platform$path.sep))
-
+%Sweave("2.Presentation1stYearThesis-Jan2017.Rnw")
+%library(knitr)
+%sessionInfo()
 \documentclass{beamer}
-
 
 \usepackage[utf8]{inputenc}	%
 \usepackage[francais]{babel}
 
-% \usepackage{graphicx}
-% \usepackage{amssymb}	% mathbb
-% \usepackage{times}
+\usepackage{graphicx}
+
 
 \usetheme{Warsaw}
 \usecolortheme{beaver}
-% \graphicspath{ {Plot/} }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\graphicspath{ {Plot/}{image/} }%
+
+
+
+%-------------------------------------------------------------
+%                    Title
+%-------------------------------------------------------------
+
+\title[Résultats de la première annèe] 
+{Résultats de la première annèe de la thèse}
+\subtitle{Comparaison analytique les bases de données de pharmacovigilance 
+vietnamienne - francaise et amélioration de la sous-notification des effets 
+indésirables médicamenteux au Vietnam}
+\author[NGUYEN, Khac-Dung] % (optional, for multiple authors)
+{NGUYEN Khac-Dung \inst{1,2} }
+\institute[Université Paul-Sabatier] % (optional)
+{
+  \inst{1}%
+  Ecole Doctoral BSB\\
+  Université III Paul-Sabatier, Toulouse
+  \and
+  \inst{2}%
+  Centre regional de Pharmacovigilance Midi-Pyrénée \\
+  Université III Paul-Sabatier, Toulouse
+}
+\date[KPT 2017] % (optional)
+% {Jan, 2017}
+{Directrice de Thèse: \textbf{Haleh BAGHERI}}
+\subject{Soutenance la premiere annee}
+
+%-------------------------------------------------------------
+
+%-------------------------------------------------------------
 \begin{document}
- \begin{frame}
-    \frametitle{Overview of Vietnamese Pharmacovigilance}
-      \begin{figure}[H]
-      \caption{Các vấn đề}
-      \includegraphics[width=10cm]{RplotTextmining2.png}
+
+\maketitle 
+<<echo=F,message=F, warning=F>>=
+      library(ggplot2)
+      library(dplyr)
+
+@
+%-------------------------------------------------------------
+%     Table of Content               
+%-------------------------------------------------------------
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+
+  \begin{frame}{Outline}
+        \tableofcontents%[pausesections]% separe the present in several slides
+    \end{frame}
+%-------------------------------------------------------------
+%     Section 1  : Overview of Vietnamese Pharmacovigilance              
+%-------------------------------------------------------------
+ \section[]{Overview of Vietnamese Pharmacovigilance}
+  %\subsection*{Overview}
+
+ \begin{frame}{Overview of Vietnamese Pharmacovigilance}
+Entrain de publication   
+      \begin{figure}[h]
+      %\caption{Plot of}%Các vấn đề
+      \includegraphics[width=0.8\paperwidth]{Article1.png}
       \end{figure}
 
   \end{frame}
   
+%-------------------------------------------------------------
+%     Section 2  :Comparison vietnamese and french database         
+%-------------------------------------------------------------
+\section[]{Comparison vietnamese and french database 2010-2015}
+ % \subsection[]{Exploitation Vietnamese database}
 
+\begin{frame}{Comparison vietnamese and french database 2010-2015}
+ 
+    % \begin{figure}[h]
+    % %\caption{Plot of}%Các vấn đề
+    % \includegraphics[width=10cm]{bandovietnam2.png}
+    % \end{figure}
+   \begin{column}[T]{5cm} % each column can also be its own environment
+   
+          \includegraphics[height=5cm]{bandovietnam2.png}
+     \end{column}
+     \begin{column}[T]{5cm} % alternative top-align that's better for graphics
+           % \makebox[\textwidth]{\\includegraphics[height=3cm]{ban do vietnam2.png}
+            \includegraphics[height=5cm]{FranceMap.png}
+     \end{column}
+  \begin{alertblock}{One developed country vs One developing country }
+  What are the differences...? 
+   \end{alertblock}
+
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{}
+
+ \begin{alertblock}{Objective:}
+Compare database Vietnam and France 2010-2015 to address the asymmetry of  structure of PhV
+   \end{alertblock}
+   
+ \begin{block}{Comparison criteria:}
+
+\begin{itemize}
+  \item Number/Year, age, sex, reporter, severity, (delayed reporting)
+  \item Drug ATC code: Group most reported,
+  \item ADR Terminology: ADR most reported
+  \item Antibiotic vs Non-antibiotic Distribution
+  \item Skin ADR vs Non-skin ADR distribution
+\end{itemize}
+   \end{block}
+   
+
+\end{frame}
+
+%-------------------------------------------------------------
+\begin{frame}{Number of reports per/Year in Vietnam 2010-2015}
+  % \includegraphics[height=8cm]{20102015SeverityPercentage.png}
+
+<<fig=T,echo=F,fig.align="right",out.width="77%">>=
+      
+
+p=read.csv2("Database 2010-2015.Year.Region.Month.csv")%>% mutate(Year=Year+2000) %>% 
+ggplot(aes(as.factor(Year)))+ geom_bar(fill="darkred")+
+  xlab ("Reporting Number" )+ ylab (NULL)+
+  theme_bw()+
+  geom_text(aes(y=..count.., label=..count..),stat="count", color="darkblue",
+            size=4.5,vjust = -0.5)
+print(p)
+ 
+@
+       
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Tesst}
+ <<par-hook, cache = FALSE>>=
+knit_hooks$set(pars = function(before, options, envir) {
+  if (before) graphics::par(options$pars)
+})
+@
+
+<<use-pars, pars = list(mar=c(4, 4, .1, .1), mgp=c(2, 1, 0))>>=
+plot(mtcars[, 1:2])
+@
+<<setup, cache = FALSE>>=
+opts_knit$set(eval.after = 'fig.cap') # evaluate fig.cap after the chunk
+@
+
+<<t-test, fig.cap = paste("The P-value is", t.test(x)$p.value)>>=
+x = rnorm(100)
+boxplot(x)
+@
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison vietnamese and french database 2010-2015}
+ 
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison vietnamese and french database 2010-2015}
+ 
+
+
+\end{frame}
+%-------------------------------------------------------------
+%     Section 3  :Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015       
+%-------------------------------------------------------------
+  \section[]{Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015}
+  \begin{frame}{Overview of Vietnamese Pharmacovigilance}
+    
+
+  \end{frame}
 \end{document}
+
+ 
