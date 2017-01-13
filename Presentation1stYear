@@ -1,0 +1,29 @@
+%Sys.which("pdflatex") 
+%Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Users/utilisateur/OneDrive - univ-tlse3.fr/Documents-UPS/LaTex/texmfs/install/miktex/bin", sep=.Platform$path.sep))
+
+\documentclass{beamer}
+
+
+\usepackage[utf8]{inputenc}	%
+\usepackage[francais]{babel}
+
+% \usepackage{graphicx}
+% \usepackage{amssymb}	% mathbb
+% \usepackage{times}
+
+\usetheme{Warsaw}
+\usecolortheme{beaver}
+% \graphicspath{ {Plot/} }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+ \begin{frame}
+    \frametitle{Overview of Vietnamese Pharmacovigilance}
+      \begin{figure}[H]
+      \caption{Các vấn đề}
+      \includegraphics[width=10cm]{RplotTextmining2.png}
+      \end{figure}
+
+  \end{frame}
+  
+
+\end{document}
