@@ -10,6 +10,7 @@
 
 \usepackage{graphicx}
 
+% \usepackage{Sweave} % for using Sexpr
 
 \usetheme{Warsaw}
 \usecolortheme{beaver}
@@ -44,19 +45,37 @@ indésirables médicamenteux au Vietnam}
 \subject{Soutenance la premiere annee}
 
 %-------------------------------------------------------------
+% insert page number
+% \setbeamertemplate{sidebar right}{}
+% \setbeamertemplate{footline}{%
+% \hfill\usebeamertemplate***{navigation symbols}
+% \hspace{1cm}\insertframenumber{}/\inserttotalframenumber} 
 
-%-------------------------------------------------------------
-\begin{document}
+ \setbeamertemplate{navigation symbols}
+{  \insertslidenavigationsymbol 
+%insertframenavigationsymbol   %insert logo
+\insertsubsectionnavigationsymbol  
+  \insertsectionnavigationsymbol
+  \insertdocnavigationsymbol  
+  \insertbackfindforwardnavigationsymbol 
+ \hspace{1em}  
+\usebeamerfont{footline} 
+   \insertframenumber/\inserttotalframenumber }
+ \setcounter{page}{1} 
+\pagenumbering{arabic} 
 
-\maketitle 
-<<echo=F,message=F, warning=F>>=
-      library(ggplot2)
-      library(dplyr)
-load(file = "WorkingSpace.Database2010-2015.Rdata.RData")
-@
-%-------------------------------------------------------------
-%     Table of Content               
-%-------------------------------------------------------------
+ %-------------------------------------------------------------
+ \begin{document}
+
+ \maketitle
+ <<echo=F,message=F, warning=F>>=
+       library(ggplot2)
+       library(dplyr)
+ load(file = "WorkingSpace.Database2010-2015 - 2.RData")
+ @
+ %-------------------------------------------------------------
+ %     Table of Content
+ %-------------------------------------------------------------
 
 
 
@@ -80,7 +99,7 @@ load(file = "WorkingSpace.Database2010-2015.Rdata.RData")
   %\subsection*{Overview}
 
  \begin{frame}{Overview of Vietnamese Pharmacovigilance}
-Entrain de publication   
+\emph{Entrain de publication}   
       \begin{figure}[h]
       %\caption{Plot of}%Các vấn đề
       \includegraphics[width=0.8\paperwidth]{Article1.png}
@@ -109,7 +128,7 @@ Entrain de publication
             \includegraphics[height=5cm]{FranceMap.png}
      \end{column}
   \begin{alertblock}{One developed country vs One developing country }
-  What are the differences...? 
+   What are the differences...? 
    \end{alertblock}
 
 
@@ -125,11 +144,11 @@ Compare database Vietnam and France 2010-2015 to address the asymmetry of  struc
  \begin{block}{Comparison criteria:}
 
 \begin{itemize}
-  \item Number/Year, age, sex, reporter, severity, (delayed reporting)
-  \item Drug ATC code: Group most reported,
-  \item ADR Terminology: ADR most reported
-  \item Antibiotic vs Non-antibiotic Distribution
-  \item Skin ADR vs Non-skin ADR distribution
+  \item <+->Number/Year, age, sex, reporter, severity, (delayed reporting)
+  \item <+->Drug ATC code: Group most reported,
+  \item <+->ADR Terminology: ADR most reported
+  \item <4->Antibiotic vs Non-antibiotic Distribution
+  \item <4->Skin ADR vs Non-skin ADR distribution 
 \end{itemize}
    \end{block}
    
@@ -161,7 +180,7 @@ Compare database Vietnam and France 2010-2015 to address the asymmetry of  struc
 
 \end{frame}
 %-------------------------------------------------------------
-\begin{frame}{Number of reports per/Year in Vietnam 2010-2015}
+\begin{frame}{Number of reports per/Month in Vietnam 2010-2015}
   \begin{columns}
       \begin{column}{0.5\textwidth}
          \textbf{Tendancy of reporting/month }
@@ -186,14 +205,236 @@ Compare database Vietnam and France 2010-2015 to address the asymmetry of  struc
 
 \end{frame}
 %-------------------------------------------------------------
-\begin{frame}{Description gender-age in vietnamese database 2010-2015}
+\begin{frame}{Description Gender-Age in vietnamese database 2010-2015}
  
-<<>>=
-plot(DrugName)
+<<fig=T,echo=F,fig.align="center",out.width="80%">>=
+  temp=d2010.2015%>%filter(!is.na(Age.Cat1y))
+  ggplot(temp,aes(x = as.numeric(Age.Cat1y), fill = Gender))+
+       geom_bar(data=filter(temp,Gender == "F"),col="white") + 
+         geom_bar(data=filter(temp,Gender == "M"),aes(y=..count..*(-1)),col="white")+ 
+         scale_y_continuous(breaks=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))+
+    scale_x_continuous(breaks =seq(0,100,5),labels=seq(0,100,5)) +
+    labs(x="Age",y=NULL,title ="Age-Gender distribution in Vietnamese PhV Database")+theme_bw()+       coord_flip()+ 
+    theme(legend.position=c(.2, .8)) 
+  #ggsave(file="Plot/20102015PyramidAgeGenderDistribution.png")
+@
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Data from France 1997-2001}
+ \includegraphics[height=0.9\textheight]{FrenchDatabase19972001.png}
+ \end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vietnamese and French database: Reporter}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+d2010.2015%>%ggplot(aes(Reporter))+geom_bar(fill="darkblue")+
+labs(x=NULL,y="Number",title ="Contribution of Reporter in Vietnamese PhV Database")+theme_bw()
+  @
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vietnamese and French database: Severity}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+d2010.2015%>%ggplot(aes(Severity))+geom_bar(fill="darkred")+
+labs(x=NULL,y="Number",title ="Distribution of Serious reports in Vietnamese PhV Database")+
+    theme_bw()
+  @
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database:Distribution by Region and Provinces }
+ 
+ \includegraphics[height=0.9\textheight]{AnalyseContributionBy5Clusters3Region20102015.png}
+
+\end{frame}
+%-------------------------------------------------------------
+
+\begin{frame}{Comparison Vi-Fr database:Drugs in Vietnamese Data }
+ \begin{itemize}
+  \item <+-| alert@1> What the most frequently reporting Drugs?
+  \item <+-> 
+        <<fig=T,echo=F,fig.align="center",out.width="75%">>=
+          t=Data.5y  %>% group_by(ATC.Class2) %>% tally() 
+          set.seed(142)   
+          wordcloud::wordcloud(t$ATC.Class2, t$n, max.words=100, rot.per=0.2, colors=RColorBrewer  ::brewer.pal(6, "Dark2")) 
+          @
+
+\end{itemize}
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database:ADR Terminology in Vietnamese Data}
+\begin{enumerate}
+
+  \item <+-> Coutaneous rection simple , such as RASH ERYTHEMATOUS and ...
+%' #' <<echo=F,fig.align="center",out.width="75%",message=F, warning=F>>=
+%' #'       Data.5y %>% group_by(Corresponding.Preferred.term) %>% tally() %>% 
+%' #'          filter(n>500,Corresponding.Preferred.term!="") %>% 
+%' #'           # Corresponding.Preferred.term=="RASH ERYTHEMATOUS") 
+%' #'           
+%' #'ggplot(aes(x=Corresponding.Preferred.term))+geom_bar(aes(y=n),stat = "identity")+coord_flip()
+%' #'         @
+  \item <+->
+  
+<<fig=T,echo=F,fig.align="center",out.width="85%",message=F, warning=F>>=
+t=Data.5y %>% group_by(Corresponding.Preferred.term) %>% tally() 
+set.seed(141)
+wordcloud::wordcloud(t$Corresponding.Preferred.term, t$n, random.order=FALSE, 
+                     colors=RColorBrewer::brewer.pal(6, "Dark2"),min.freq=100, 
+          scale=c(4,.2),rot.per=.15,max.words=50)
+          @
+\end{enumerate}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: SOC Classification}
+ <<fig=T,echo=F,fig.align="center",out.width="70%">>=
+Data.5y%>% group_by(Organ.Disorder) %>% tally() %>% filter(Organ.Disorder!="") %>% 
+  ggplot(aes(Organ.Disorder,n))+geom_bar(fill="darkblue",stat = "identity")+
+labs(x="Organ Disorder",y=NULL,title ="SOC Classification")+
+    theme_bw()+coord_flip()
 @
 
 
 \end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Skin and Genneral Disorder - Most reported}
+
+ \begin{column}[T]{5cm} 
+   <<fig=T,echo=F,fig.align="center",out.width="120%">>=
+Data.5y%>% filter(SOC1==100) %>% 
+group_by(Corresponding.Preferred.term) %>% tally()%>% filter(Corresponding.Preferred.term!="") %>% 
+  ggplot(aes(Corresponding.Preferred.term,n))+geom_bar(fill="darkblue",stat = "identity")+
+labs(x=NULL,y=NULL,title ="WHO-ART Terminology in Skin Disorder with Frequency")+
+    theme_bw()+coord_flip()
+@
+          
+     \end{column}
+     \begin{column}[T]{5cm} 
+           <<fig=T,echo=F,fig.align="center",out.width="120%">>=
+Data.5y%>% filter(SOC1==1810) %>% 
+group_by(Corresponding.Preferred.term) %>% tally()%>% filter(Corresponding.Preferred.term!="") %>% 
+  ggplot(aes(Corresponding.Preferred.term,n))+geom_bar(fill="darkblue",stat = "identity")+
+labs(x=NULL,y=NULL,title ="WHO-ART Terminology in General Disorder with Frequency")+
+    theme_bw()+coord_flip()
+@
+     \end{column}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Overrpoting of skin disorder}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+ d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>%
+    ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = Gender))+
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],SkinID == "YES")) + 
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],SkinID == "NO"),aes(y=..count..*(-1)))+ 
+    scale_y_continuous(breaks=seq(-1000,1000,100),labels=abs(seq(-1000,1000,100)))+
+    coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+theme_bw()+
+    scale_x_continuous(seq(0,100,10),seq(0,100,10))+
+    labs(x="Age",y=NULL,
+         title="Overreporting of skin disorder by Gender and Age \n       
+   Skin ADR                                                                  NonSkin ADR")+
+    theme(legend.position = c(.8,.8))
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Overrpoting of General disorder compared with Non Skin ADR}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+ d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>% filter(SkinID=="NO") %>% 
+    ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = Gender))+
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],GeneralDis == "YES")) + 
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],GeneralDis == "NO"),aes(y=..count..*(-1)))+ 
+    scale_y_continuous(breaks=seq(-1000,1000,100),labels=abs(seq(-1000,1000,100)))+
+    coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+theme_bw()+
+    scale_x_continuous(seq(0,100,10),seq(0,100,10))+
+    labs(x="Age",y=NULL,
+         title="Reporting of General disorders by Gender-Age compared with Other NonSkinADR \n  
+GeneralDis ADR                                                          Non Skin+GeneralDis")+
+    theme(legend.position = c(.8,.8))
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Overuse of antibiotic}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>% #filter(!is.na(Gender)) %>% 
+ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = Gender))+
+ geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],Antibiotic == "YES")) + 
+ geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],Antibiotic == "NO"),aes(y=..count..*(-1)))+ 
+ scale_y_continuous(breaks=seq(-1000,1000,100),labels=abs(seq(-1000,1000,100)))+
+ coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+theme_bw()+
+    scale_x_continuous(seq(0,100,10),seq(0,100,10))+
+ labs(x=NULL,y=NULL,
+      title="Antibiotic using in ADR Report by Gender and Age \n 
+         Antibiotic                                           Non-Antibiotic")+
+    theme(legend.position = c(.1,.7))
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: How about Male vs Female using Antibiotics?}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+ d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>%
+ ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = SkinID))+
+   geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],Gender == "M")) + 
+   geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),], Gender== "F"),mapping=aes(y=..count..*(-1)))+ 
+   scale_y_continuous(breaks=seq(-6000,6000,1000),labels=abs(seq(-6000,6000,1000)))+
+   coord_flip() + labs(y="Number of report", x="Age") +
+   geom_hline(yintercept=0, colour="white", lwd=1)+
+  labs(x="Age",y=NULL,
+       title="Male and Female in Skin Reporting and Non-Skin \n
+           Male                                                                         Female")+
+   theme_bw()+theme(legend.position = c(.8,.8)) 
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Tendency per Year?}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+
+d2010.2015 %>%
+ggplot( aes(x = as.factor(Year),y= ..count.., fill = SkinID))+
+ geom_bar(data = d2010.2015[d2010.2015$Antibiotic == "YES",]) + 
+ geom_bar(data = d2010.2015[d2010.2015$Antibiotic == "NO",],mapping=aes(y= ..count..*(-1)) )+ 
+ scale_y_continuous(breaks=seq(-6000,6000,1000),labels=abs(seq(-6000,6000,1000)))+
+ coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+
+ ggtitle("Tendency Using Antibiotics and Skin Reporting per Year\n
+         Antibiotic                                                  Non-Antibiotic")
+@
+
+\end{frame}
+%-------------------------------------------------------------
+%     Section 3  :Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015       
+%-------------------------------------------------------------
+  \section[]{Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015}
+  
+  \begin{frame}{SCAR in in the Vietnamese database}
+    
+<<echo=F,message=F, warning=F>>=
+rm(list = ls())
+load(file = "WorkingSpace.SCAR_3.RData")
+@
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+SCAR14.15%>%filter(LATENCY.CAT!="")%>%
+     ggplot(aes(LATENCY.CAT))+geom_bar(aes(fill=SEX))+
+  theme_bw() +   theme(legend.position=c(.8, .8))+
+  labs(x="Number of SCAR reports",y="Latency time",
+       title="Latatency Category of time of SCAR vs Sex 2014-2015")
+@
+
+  \end{frame}
+\end{document}
 %-------------------------------------------------------------
 \begin{frame}{Comparison vietnamese and french database 2010-2015}
  
@@ -201,13 +442,15 @@ plot(DrugName)
 
 \end{frame}
 %-------------------------------------------------------------
-%     Section 3  :Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015       
-%-------------------------------------------------------------
-  \section[]{Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015}
-  \begin{frame}{Overview of Vietnamese Pharmacovigilance}
-    
-
-  \end{frame}
-\end{document}
-
+\begin{frame}{Comparison vietnamese and french database 2010-2015}
  
+w
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison vietnamese and french database 2010-2015}
+ 
+d
+
+\end{frame}
+
