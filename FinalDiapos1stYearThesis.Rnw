@@ -1,0 +1,955 @@
+%Sys.which("pdflatex") 
+%Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Users/utilisateur/OneDrive - univ-tlse3.fr/Documents-UPS/LaTex/texmfs/install/miktex/bin", sep=.Platform$path.sep))
+%Sweave("2.Presentation1stYearThesis-Jan2017.Rnw")
+%library(knitr)
+%sessionInfo()
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}	%
+\usepackage[francais]{babel}
+
+\usepackage{graphicx}
+
+% \usepackage{Sweave} % for using Sexpr
+
+\usetheme{Warsaw}
+\usecolortheme{beaver}
+\graphicspath{ {Plot/}{image/} }%
+
+
+
+%-------------------------------------------------------------
+%                    Title
+%-------------------------------------------------------------
+
+\title[Résultats de la première annèe] 
+{Résultats de la première annèe de la thèse}
+\subtitle{Comparaison analytique les bases de données de pharmacovigilance 
+vietnamienne - francaise et amélioration de la sous-notification des effets 
+indésirables médicamenteux au Vietnam}
+\author[NGUYEN, Khac-Dung] % (optional, for multiple authors)
+{NGUYEN Khac-Dung \inst{1,2} }
+\institute[Université Paul-Sabatier] % (optional)
+{
+  \inst{1}%
+  Ecole Doctoral BSB\\
+  Université III Paul-Sabatier, Toulouse
+  \and
+  \inst{2}%
+  Centre regional de Pharmacovigilance Midi-Pyrénée \\
+  Université III Paul-Sabatier, Toulouse
+}
+\date[KPT 2017] % (optional)
+% {Jan, 2017}
+{Directrice de Thèse: \textbf{Haleh BAGHERI}}
+\subject{Soutenance la premiere annee}
+
+%-------------------------------------------------------------
+% insert page number
+% \setbeamertemplate{sidebar right}{}
+% \setbeamertemplate{footline}{%
+% \hfill\usebeamertemplate***{navigation symbols}
+% \hspace{1cm}\insertframenumber{}/\inserttotalframenumber} 
+
+ \setbeamertemplate{navigation symbols}
+{  \insertslidenavigationsymbol 
+%insertframenavigationsymbol   %insert logo
+\insertsubsectionnavigationsymbol  
+  \insertsectionnavigationsymbol
+  \insertdocnavigationsymbol  
+  \insertbackfindforwardnavigationsymbol 
+ \hspace{1em}  
+\usebeamerfont{footline} 
+   \insertframenumber/\inserttotalframenumber }
+ \setcounter{page}{1} 
+\pagenumbering{arabic} 
+
+ %-------------------------------------------------------------
+ \begin{document}
+
+ \maketitle
+ <<echo=F,message=F, warning=F>>=
+       library(ggplot2)
+       library(dplyr)
+ load(file = "WorkingSpace.Database2010-2015 - 2.RData")
+ @
+ %-------------------------------------------------------------
+ %     Table of Content
+ %-------------------------------------------------------------
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+
+  \begin{frame}{Outline}
+        \tableofcontents%[pausesections]% separe the present in several slides
+    \end{frame}
+%-------------------------------------------------------------
+%     Section 1  : Overview of Vietnamese Pharmacovigilance              
+%-------------------------------------------------------------
+ \section[]{Overview of Vietnamese Pharmacovigilance}
+  %\subsection*{Overview}
+
+ \begin{frame}{Overview of Vietnamese Pharmacovigilance}
+\emph{Entrain de publication}   
+      \begin{figure}[h]
+      %\caption{Plot of}%Các vấn đề
+      \includegraphics[width=0.8\paperwidth]{Article1.png}
+      \end{figure}
+
+  \end{frame}
+  
+%-------------------------------------------------------------
+%     Section 2  :Comparison vietnamese and french database         
+%-------------------------------------------------------------
+\section[]{Comparison vietnamese and french database 2010-2015}
+ % \subsection[]{Exploitation Vietnamese database}
+
+\begin{frame}{Comparison vietnamese and french database 2010-2015}
+ 
+    % \begin{figure}[h]
+    % %\caption{Plot of}%Các vấn đề
+    % \includegraphics[width=10cm]{bandovietnam2.png}
+    % \end{figure}
+   \begin{column}[T]{5cm} % each column can also be its own environment
+   
+          \includegraphics[height=5cm]{bandovietnam2.png}
+     \end{column}
+     \begin{column}[T]{5cm} % alternative top-align that's better for graphics
+           % \makebox[\textwidth]{\\includegraphics[height=3cm]{ban do vietnam2.png}
+            \includegraphics[height=5cm]{FranceMap.png}
+     \end{column}
+  \begin{alertblock}{One developed country vs One developing country }
+   What are the differences...? 
+   \end{alertblock}
+
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison vietnamese and french}
+
+ \begin{alertblock}{Objective:}
+Compare database Vietnam and France 2010-2015 to address the asymmetry of  structure of PhV
+   \end{alertblock}
+   
+ \begin{block}{Comparison criteria:}
+
+\begin{itemize}
+  \item <1->Number/Year, age, sex, reporter, severity, (delayed reporting)
+  \item <2->Drug ATC code: Group most reported,
+  \item <2->ADR Terminology: ADR most reported
+  \item <2->Antibiotic vs Non-antibiotic Distribution
+  \item <2->Skin ADR vs Non-skin ADR distribution 
+\end{itemize}
+   \end{block}
+
+\end{frame}
+
+%-------------------------------------------------------------
+\begin{frame}{Number of reports per/Year in Vietnam 2010-2015}
+  % \includegraphics[height=8cm]{20102015SeverityPercentage.png}
+    \begin{columns}
+      \begin{column}{0.3\textwidth}
+         \textbf{Tendancy of reporting : Positive}
+      \end{column}
+      \begin{column}{0.85\textwidth} 
+      
+        <<fig=T,echo=F,fig.align="right",out.width="77%">>=
+      print(
+          read.csv2("Database 2010-2015.Year.Region.Month.csv")%>% mutate(Year=Year+2000) %>% 
+        ggplot(aes(as.factor(Year)))+ geom_bar(fill="darkred")+
+          xlab ("Reporting Number" )+ ylab (NULL)+
+          theme_bw()+
+          geom_text(aes(y=..count.., label=..count..),stat="count", color="darkblue",
+                    size=4.5,vjust = -0.5)
+        )
+        @
+        
+      \end{column}
+    \end{columns}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Number of reports per/Month in Vietnam 2010-2015}
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+         \textbf{Tendency of reporting/month }
+         <<fig=T,echo=F,fig.align="right",out.width="77%">>=
+
+  t.serie=read.csv2("Database 2010-2015.Year.Region.Month.csv") %>% 
+  do(
+    data.frame(table(Year=.$Year,Month=.$Month))
+    ) %>% arrange(Year) %>% 
+  select(Freq) %>% ts(.,start = c(2010,1),frequency = 12)
+  plot(t.serie)
+  abline(reg=lm(t.serie~time(t.serie)),col=2,lwd=2)
+@
+      \end{column}
+      \begin{column}{0.6\textwidth} 
+
+ <<fig=T,echo=F,fig.align="right">>=
+  boxplot(t.serie~cycle(t.serie))
+  @
+ \end{column}
+    \end{columns}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Description Gender-Age in vietnamese database 2010-2015}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="80%">>=
+  temp=d2010.2015%>%filter(!is.na(Age.Cat1y))
+  ggplot(temp,aes(x = as.numeric(Age.Cat1y), fill = Gender))+
+       geom_bar(data=filter(temp,Gender == "F"),col="white") + 
+         geom_bar(data=filter(temp,Gender == "M"),aes(y=..count..*(-1)),col="white")+ 
+         scale_y_continuous(breaks=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))+
+    scale_x_continuous(breaks =seq(0,100,5),labels=seq(0,100,5)) +
+    labs(x="Age",y=NULL,title ="Age-Gender distribution in Vietnamese PhV Database")+theme_bw()+       coord_flip()+ 
+    theme(legend.position=c(.2, .8)) 
+  #ggsave(file="Plot/20102015PyramidAgeGenderDistribution.png")
+@
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Data from France 1997-2001}
+ \includegraphics[height=0.9\textheight]{FrenchDatabase19972001.png}
+ \end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vietnamese and French database: Reporter}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+d2010.2015%>%ggplot(aes(Reporter))+geom_bar(fill="darkblue")+
+labs(x=NULL,y="Number",title ="Contribution of Reporter in Vietnamese PhV Database")+theme_bw()
+  @
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vietnamese and French database: Severity}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+d2010.2015%>%ggplot(aes(Severity))+geom_bar(fill="darkred")+
+labs(x=NULL,y="Number",title ="Distribution of Serious reports in Vietnamese PhV Database")+
+    theme_bw()
+  @
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database:Distribution by Region and Provinces }
+ 
+ \includegraphics[height=0.9\textheight]{AnalyseContributionBy5Clusters3Region20102015.png}
+
+\end{frame}
+%-------------------------------------------------------------
+
+\begin{frame}{Comparison Vi-Fr database:Drugs in Vietnamese Data }
+ \begin{itemize}
+  \item <1-| alert@1> What the most frequently reporting Drugs?
+  \item <1-> 
+        <<fig=T,echo=F,fig.align="center",out.width="75%">>=
+          t=Data.5y  %>% group_by(ATC.Class2) %>% tally() 
+          set.seed(142)   
+          wordcloud::wordcloud(t$ATC.Class2, t$n, max.words=100, rot.per=0.2, colors=RColorBrewer  ::brewer.pal(6, "Dark2")) 
+          @
+
+\end{itemize}
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database:ADR Terminology in Vietnamese Data}
+  \begin{columns}[T] % contents are top vertically aligned
+     \begin{column}[T]{6.5cm} % each column can also be its own environment
+     % Contents of first column \\ split into two lines
+          
+<<fig=T,echo=F,fig.align="center",out.width="100%",message=F, warning=F>>=
+t=Data.5y %>% group_by(Corresponding.Preferred.term) %>% tally() 
+set.seed(141)
+wordcloud::wordcloud(t$Corresponding.Preferred.term, t$n, random.order=FALSE, 
+                     colors=RColorBrewer::brewer.pal(6, "Dark2"),min.freq=100, 
+          scale=c(4,.2),rot.per=.15,max.words=50)
+          @
+     \end{column}
+     \begin{column}[T]{3.5cm} 
+              Cutaneous rection simple , such as RASH ERYTHEMATOUS and ...
+     \end{column}
+     \end{columns}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: SOC Classification}
+ <<fig=T,echo=F,fig.align="center",out.width="70%">>=
+Data.5y%>% group_by(Organ.Disorder) %>% tally() %>% filter(Organ.Disorder!="") %>% 
+  ggplot(aes(Organ.Disorder,n))+geom_bar(fill="darkblue",stat = "identity")+
+labs(x="Organ Disorder",y=NULL,title ="SOC Classification")+
+    theme_bw()+coord_flip()
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Skin and Genneral Disorder - Most reported}
+
+ \begin{column}[T]{5cm} 
+   <<fig=T,echo=F,fig.align="center",out.width="120%">>=
+Data.5y%>% filter(SOC1==100) %>% 
+group_by(Corresponding.Preferred.term) %>% tally()%>% filter(Corresponding.Preferred.term!="") %>% 
+  ggplot(aes(Corresponding.Preferred.term,n))+geom_bar(fill="darkblue",stat = "identity")+
+labs(x=NULL,y=NULL,title ="WHO-ART Terminology in Skin Disorder with Frequency")+
+    theme_bw()+coord_flip()
+@
+          
+     \end{column}
+     \begin{column}[T]{5cm} 
+           <<fig=T,echo=F,fig.align="center",out.width="120%">>=
+Data.5y%>% filter(SOC1==1810) %>% 
+group_by(Corresponding.Preferred.term) %>% tally()%>% filter(Corresponding.Preferred.term!="") %>% 
+  ggplot(aes(Corresponding.Preferred.term,n))+geom_bar(fill="darkblue",stat = "identity")+
+labs(x=NULL,y=NULL,title ="WHO-ART Terminology in General Disorder with Frequency")+
+    theme_bw()+coord_flip()
+@
+     \end{column}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Overrpoting of skin disorder}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+ d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>%
+    ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = Gender))+
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],SkinID == "YES")) + 
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],SkinID == "NO"),aes(y=..count..*(-1)))+ 
+    scale_y_continuous(breaks=seq(-1000,1000,100),labels=abs(seq(-1000,1000,100)))+
+    coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+theme_bw()+
+    scale_x_continuous(seq(0,100,10),seq(0,100,10))+
+    labs(x="Age",y=NULL,
+         title="Overreporting of skin disorder by Gender and Age \n       
+   Skin ADR                                                                  NonSkin ADR")+
+    theme(legend.position = c(.8,.8))
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Overrpoting of General disorder compared with Non Skin ADR}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+ d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>% filter(SkinID=="NO") %>% 
+    ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = Gender))+
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],GeneralDis == "YES")) + 
+    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],GeneralDis == "NO"),aes(y=..count..*(-1)))+ 
+    scale_y_continuous(breaks=seq(-1000,1000,100),labels=abs(seq(-1000,1000,100)))+
+    coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+theme_bw()+
+    scale_x_continuous(seq(0,100,10),seq(0,100,10))+
+    labs(x="Age",y=NULL,
+         title="Reporting of General disorders by Gender-Age compared with Other NonSkinADR \n  
+GeneralDis ADR                                                          Non Skin+GeneralDis")+
+    theme(legend.position = c(.8,.8))
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Overuse of antibiotic}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>% #filter(!is.na(Gender)) %>% 
+ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = Gender))+
+ geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],Antibiotic == "YES")) + 
+ geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],Antibiotic == "NO"),aes(y=..count..*(-1)))+ 
+ scale_y_continuous(breaks=seq(-1000,1000,100),labels=abs(seq(-1000,1000,100)))+
+ coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+theme_bw()+
+    scale_x_continuous(seq(0,100,10),seq(0,100,10))+
+ labs(x=NULL,y=NULL,
+      title="Antibiotic using in ADR Report by Gender and Age \n 
+         Antibiotic                                           Non-Antibiotic")+
+    theme(legend.position = c(.1,.7))
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+%' \begin{frame}{Comparison Vi-Fr database: How about Male vs Female using Antibiotics?}
+%'  
+%' <<fig=T,echo=F,fig.align="center",out.width="75%">>=
+%'  d2010.2015[!is.na(d2010.2015$Age.Cat1y),] %>%
+%'  ggplot(aes(x = as.numeric(Age.Cat1y),y=..count.., fill = SkinID))+
+%'    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),],Gender == "M")) + 
+%'    geom_bar(data=subset(d2010.2015[!is.na(d2010.2015$Age.Cat1y),], Gender== "F"),mapping=aes(y=..count..*(-1)))+ 
+%'    scale_y_continuous(breaks=seq(-6000,6000,1000),labels=abs(seq(-6000,6000,1000)))+
+%'    coord_flip() + labs(y="Number of report", x="Age") +
+%'    geom_hline(yintercept=0, colour="white", lwd=1)+
+%'   labs(x="Age",y=NULL,
+%'        title="Male and Female in Skin Reporting and Non-Skin \n
+%'            Male                                                                         Female")+
+%'    theme_bw()+theme(legend.position = c(.8,.8)) 
+%' @
+%' 
+%' 
+%' \end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Comparison Vi-Fr database: Tendency per Year?}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+
+d2010.2015 %>%
+ggplot( aes(x = as.factor(Year),y= ..count.., fill = SkinID))+
+ geom_bar(data = d2010.2015[d2010.2015$Antibiotic == "YES",]) + 
+ geom_bar(data = d2010.2015[d2010.2015$Antibiotic == "NO",],mapping=aes(y= ..count..*(-1)) )+ 
+ scale_y_continuous(breaks=seq(-6000,6000,1000),labels=abs(seq(-6000,6000,1000)))+
+ coord_flip() + geom_hline(yintercept=0, colour="white", lwd=1)+
+ ggtitle("Tendency Using Antibiotics and Skin Reporting per Year\n
+         Antibiotic                                                  Non-Antibiotic")
+@
+
+\end{frame}
+%-------------------------------------------------------------
+%     Section 3  :Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015       
+%-------------------------------------------------------------
+  \section[]{Analyse Severe Cutaneous Drug Reaction in the Vietnamese database 2006-2015}
+ 
+\begin{frame}{Continue with other Drug and Group as in Results 2006-2013 From Master2 before... }
+\includegraphics[width=0.8\paperwidth]{20062013MasterSCARTable.png}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Continue with other Drug and Group as in Results 2006-2013 From Master2 before... }
+\includegraphics[width=0.8\paperwidth]{20062013MasterSCAR.png}
+
+\end{frame}
+ %-------------------------------------------------------------
+\begin{frame}{SCAR in in the Vietnamese database}
+ 
+ \begin{block}{Description of SCAR case in Vietnamese Data}
+      Age, Sex, Latency Time, Classification,Death, Drugs Suspected...
+   \end{block}
+   \pause
+ \begin{alertblock}{Chose the Method for signal generation}
+      Reporting Disproportionality - ROR
+   \end{alertblock}
+   \begin{alertblock}{Establish and evaluation the signal by year}
+      ROR cumulative by Year
+   \end{alertblock}
+   
+
+\end{frame}
+%-------------------------------------------------------------
+  \begin{frame}{SCAR in in the Vietnamese database: Latency time in 2014-2015...}
+    
+<<fig=T,echo=F,fig.align="center",out.width="75%",message=F,warning=F>>=
+load(file = "WorkingSpace.SCAR_3.RData")
+SCAR14.15%>%
+     ggplot(aes(LATENCY.CAT))+geom_bar(aes(fill=SEX))+
+  theme_bw() +   theme(legend.position=c(.8, .8))+
+  labs(x="Number of SCAR reports",y="Latency time",
+       title="Latatency Category of time of SCAR vs Sex 2014-2015")
+@
+
+  \end{frame}
+
+%-------------------------------------------------------------
+
+\begin{frame}{SCAR in the Vietnamese database}
+ Selection Critera  - ``Grave/Non-Grave'' Method
+  \includegraphics[width=0.8\paperwidth]{FlowchartSelectionSCAR.png}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Drugs induced SCAR: The most frequented}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+      set.seed(141)
+      t=Data.5y %>% filter(SCAR=="YES") %>% group_by(ATC.Class2) %>% tally()
+      
+      wordcloud::wordcloud(t$ATC.Class2, t$n, max.words=100, rot.per=0.2, 
+                           colors=RColorBrewer  ::brewer.pal(6, "Dark2")) 
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Number of SCAR per Year}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="75%">>=
+    Cutaneous %>% filter(SCAR=="YES")%>% select (Year) %>%
+          ggplot(aes(as.factor(Year)))+geom_bar(fill="darkblue")+
+          labs(x="Year",y="Number of Reports",title =NULL)+theme_bw()
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Age Sex of Patient in SCAR Reports}
+ \begin{center}
+\begin{tabular}{ |c |c| c|}
+    Gender & Number & Mean.Age\\
+    F & 129 & 43.22\\
+    M & 206 & 42.26\\
+ 
+\end{tabular}
+\end{center}
+
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Reporting OR of Using Group Antibiotic C3G and carbapenem J04D vs Non Using}
+     \begin{center}
+    \begin{tabular}{ |c| c| c|c| }
+     CephaUsing & OR & lower & upper\\
+    YES & 1 & NA & NA\\
+    NO & 0.28 & 0.2 & 0.38\\  
+    \end{tabular}
+    \end{center}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{ROR Stratification of antibiotic Drugs in the Group J04D}
+ 
+<<fig=T,echo=F,fig.align="center",out.width="50%",message=F, warning=F>>=
+ epitools::oddsratio.wald( 
+      table(Cepha=Data.5y$CEPHA,
+            SCAR=Data.5y$SCAR)
+                                 ,rev ="both"      ) $measure  %>% 
+      data.frame() %>%  mutate(Cepha=rownames(.))%>%  
+      filter (estimate!=Inf ) %>%  
+    ggplot( aes(x=Cepha, y=estimate),   group=Cepha) + 
+      geom_errorbar(aes(ymin=lower, ymax=upper), colour="black", width=.2) +
+      geom_point( size=3, shape=21, fill="white") + # 21 is filled circle
+      xlab("Group antibiotic Cephalosporin and other Betalactamines J04D") +
+      ylab("Odd Ratios") +
+      ggtitle("OR of all Cepha medication suspected induced SCAR \n vs induced other Non cases") +
+      geom_hline(yintercept=1, color="red", alpha=0.4,lwd=1.5) +
+      coord_flip()+
+      theme_bw() +
+      scale_y_log10(breaks=10^seq(0,2),minor_breaks = mb) 
+@
+
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{ But will the signal will be kept if using..}
+    
+    \textbf{Method Logistic Binominal Model for Severe/Non-Severe , Adjusted by Age and Sex}
+      
+      \begin{exampleblock}{ Question?}
+      
+      Patient using 1 medicament in group cephalosporin could have more risk than other in the same group with this method?
+  
+      \end{exampleblock}
+    
+\end{frame}
+%' %-------------------------------------------------------------
+%' \begin{frame}{Logistic Binominal Model for Case/Non-Case : SCAR ~ Gender + CEPHA  }
+%'  
+%' <<fig=T,echo=F,fig.align="center",out.width="71%",message=F, warning=F>>=
+%'  mod3=Data.5y %>%filter(Gender!="Unknown") %>%
+%'   mutate(SCAR=as.factor(SCAR),CEPHA=as.factor(CEPHA)) %>%  # chuyen dang factor
+%'   group_by(SCAR,Gender,CEPHA) %>% tally() %>%
+%'   mutate(CEPHA=relevel(as.factor(CEPHA),"NON.CEPHA")) %>% ###need  change levels of NON.CEPHA
+%'   
+%'   glm(F2 ,.,weights = n, family = binomial(link="logit"))
+%'     
+%'     exp(cbind(OR=coef(mod3), confint(mod3))) %>% as.data.frame() %>% 
+%'   setNames(., c("OR", "lower","upper")) %>% 
+%' 
+%' mutate(Cepha=substring(rownames(.),6))%>%  
+%'   filter(between(row_number(), 3, n())) %>% 
+%'   
+%'   ggplot( aes(x=Cepha, y=OR)  ) + 
+%'   geom_errorbar(aes(ymin=lower, ymax=upper), colour="black", width=.2) +
+%'   geom_point( size=3, shape=21, fill="white") + # 21 is filled circle
+%'   labs(x="Group antibiotic Cephalosporin and other Betalactamines -Model1",
+%'         y="Odd Ratios",
+%'     title="OR of all Cepha medication suspected induce SCAR vs \n induced other ADR") +
+%'   geom_hline(yintercept=1, color="red", alpha=0.4,lwd=1.5) +
+%'   coord_flip(ylim=c(0,10))+
+%'   theme_bw() 
+%' @
+%' 
+%' 
+%' \end{frame}
+%' %-------------------------------------------------------------
+%' \begin{frame}{Logistic Binominal Model for Severe/Non-Severe CutaneousADR : SCAR \char`\~ Gender + CEPHA} 
+%'  
+%' <<fig=T,echo=F,fig.align="center",out.width="71%",message=F, warning=F>>=
+%' mod5=Data.5y %>% filter(SOC1=="100") %>% 
+%'   mutate(SCAR=as.factor(SCAR),CEPHA=as.factor(CEPHA)) %>%  # chuyen dang factor
+%'   filter(Gender!="Unknown") %>%
+%'   group_by(SCAR,Gender,CEPHA) %>% tally() %>%
+%'   mutate(CEPHA=relevel(as.factor(CEPHA),"NON.CEPHA")) %>% ###need  change levels of NON.CEPHA
+%'   glm(F2 ,.,weights = n, family = binomial(link="logit"))
+%' 
+%' exp(cbind(OR=coef(mod5), confint(mod5))) %>% as.data.frame() %>% 
+%'   setNames(., c("OR", "lower","upper")) %>% 
+%'   
+%'   mutate(Cepha=substring(rownames(.),6))%>%  
+%'   filter(between(row_number(), 3, n())) %>% 
+%'   
+%'   ggplot( aes(x=Cepha, y=OR)  ) + 
+%'   geom_errorbar(aes(ymin=lower, ymax=upper), colour="black", width=.2) +
+%'   geom_point( size=3, shape=21, fill="white") + # 21 is filled circle
+%'   xlab("Group antibiotic Cephalosporin and other Betalactamines -Model1") +
+%'   ylab("Odd Ratios") +
+%'   ggtitle("OR of all Cepha medication suspected induce SCAR vs \n induced other Cutaneous ADR") +
+%'   geom_hline(yintercept=1, color="red", alpha=0.4,lwd=1.5) +
+%'   coord_flip(ylim=c(0,8))+
+%'   theme_bw()  
+%' @
+%' 
+%' 
+%' \end{frame}
+
+%-------------------------------------------------------------
+\begin{frame}{Logistic Binominal Model for Severe/Non-Severe CutaneousADR :ROR Adjusted by Age,Gender }
+<<fig=T,echo=F,fig.align="center",out.width="71%",message=F, warning=F>>=
+mod6=Data.5y  %>% filter(SOC1=="100") %>% 
+  mutate(SCAR=as.factor(SCAR),CEPHA=as.factor(CEPHA)) %>%  # chuyen dang factor
+  filter(Gender!="Unknown") %>%
+   
+  mutate(CEPHA=relevel(as.factor(CEPHA),"NON.CEPHA")) %>% ###need  change levels of NON.CEPHA
+  group_by(SCAR,Age,Gender,CEPHA) %>% tally() %>%
+  glm(SCAR ~ Gender +Age+ CEPHA ,.,weights = n, family = binomial(link="logit"))
+
+
+exp(cbind(OR=coef(mod6), confint(mod6))) %>% as.data.frame() %>% 
+  setNames(., c("OR", "lower","upper")) %>% 
+  
+  mutate(Cepha=substring(rownames(.),6))%>%  
+  filter(between(row_number(), 4, n())) %>% # tinh tu dong thu 4 do them bien Age1
+  
+  ggplot( aes(x=Cepha, y=OR)  ) + 
+  geom_errorbar(aes(ymin=lower, ymax=upper), colour="black", width=.2) +
+  geom_point( size=3, shape=21, fill="white") + # 21 is filled circle
+  xlab("Group antibiotic Cephalosporin and other Betalactamines -Model1") +
+  ylab("Odd Ratios") +
+  ggtitle("OR Adjusted by Age-Gender of  Cephaloporin+Penem \n
+        induced SCAR vs induced other Cutaneous ADR") +
+  geom_hline(yintercept=1, color="red", alpha=0.4,lwd=1.5) +
+  coord_flip(ylim=c(0,8))+
+  theme_bw() 
+@
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{The following works to do for SCAR }
+\begin{itemize}
+  \item Re-examine the original cases in paper to identify the exact delayed time
+  \item Consider Paracetamol as a "bruit" verify the real risk SJS/TEN of this drug
+  \item Re-establish the list high-risk drugs
+  \item Do the stratification with other drugs in the same group to \textbf{identify alternative therapy}
+\end{itemize}
+
+\end{frame}
+
+
+%-------------------------------------------------------------
+%     Section 4  :Analyse Shock and Reaction Anaphylactic in the Vietnamese database 2006-2015 %-------------------------------------------------------------
+  \section[]{Analyse Shock and Reaction Anaphylactic in the Vietnamese database 2006-2015}
+%-------------------------------------------------------------
+\begin{frame}{Analyse Shock and Reaction Anaphylactic in the Vietnamese database 2006-2015}
+  \begin{block}{Objective}
+     Identify the high-risk drugs and quantify the signal in database
+     
+     \end{block}
+     
+  \begin{block}{Method}
+      \begin{itemize}
+      \item  Analytic description the anaphylatic case
+      \item  Caculation the signal ROR with the ajustement of Age, 
+      Sex for all the high-risk drug
+      \item  Stratification of data in each ATC pharmacological group
+    \end{itemize}
+ 
+
+     \end{block}
+
+\end{frame}
+
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Inlusion and Exclusion Criteria}
+ 
+ \includegraphics[width=0.7\paperwidth]{FlowcharSelectionAnaphylaxis.png}
+
+\end{frame}
+
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Number of Cases /Year }
+ 
+<<fig=T,echo=F,fig.align="center",out.width="67%",message=F, warning=F>>=
+read.csv2("tinh ROR SPV -2010-2014- Linh.csv") %>% select(nam, mabc,case) %>% 
+    ggplot(aes(as.factor(nam)))+geom_bar(aes(fill=as.factor(case)))+  theme_bw()+
+  labs(x="Year",y="Number of ADR Reports",
+       title="Evolution of Anaphylaxis Case by Year")+
+    theme(legend.position=c(.2, .8))+
+ scale_fill_discrete(guide = guide_legend(title = "Anaphylaxis Case")) 
+@
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Which drugs most frequented in anaphylacxis?}
+ 
+ \textbf{CEFOTAXIM, CEFTRIAXON , CEFTAZIDIM} , PARACETAMOL , CEFOPERAZON , AMOXICILLIN , DICLOFENAC , AMPICILLIN , LIDOCAIN , CEFALEXIN , CEFUROXIM , METRONIDAZOL , CIPROFLOXACIN , GENTAMICIN , CHYMOTRYPSIN , IOBITRIDOL , IOPROMID , STREPTOMYCIN , OXYTOCIN , SULFONAMIDES.AND.TRIMETHOPRIM , BENZYLPENICILLIN , IOXITALAMIC.ACID , VANCOMYCIN , TRANEXAMIC.ACID , GLUCOSE , TETANUS.ANTITOXIN , CEFADROXIL , AMINO.ACIDS , NACL , FENTANYL , CEFEPIM , CHLORAMPHENICOL , CEFAZOLIN , PHENOXYMETHYLPENICILLIN , CEFRADIN , BUPIVACAIN , ATRACURIUM , AMIKACIN , CEFTIZOXIM , IMIPENEM.CILASTATIN , L..ORNITHIN.L.ASPARTAT , LEVOFLOXACIN , METHYLPREDNISOLON , OMEPRAZOL , OXALIPLATIN , PROPOFOL , RANITIDIN , RINGER.LACTAT , SALBUTAMOL
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{High risk drugs with lower bound of OR \textgreater 1 ?}
+ \begin{center}
+  \begin{tabular}{ c c c c}
+     OR & lower & upper & Drug\\
+    3.07 & 2.68 & 3.53 & CEFOTAXIM\\
+    3.15 & 2.65 & 3.73 & CEFTRIAXON\\
+    4.19 & 3.49 & 5.01 & CEFTAZIDIM\\
+    3.73 & 2.87 & 4.81 & CEFOPERAZON\\
+    1.62 & 1.27 & 2.03 & AMOXICILLIN\\
+    2.31 & 1.7 & 3.08 & AMPICILLIN\\
+    5.18 & 3.5 & 7.54 & LIDOCAIN\\
+    2.41 & 1.73 & 3.3 & CEFALEXIN\\
+    2.07 & 1.38 & 3.04 & CHYMOTRYPSIN\\
+    4.11 & 2.64 & 6.22 & IOBITRIDOL\\
+    6.04 & 3.66 & 9.73 & IOPROMID\\
+    1.9 & 1.23 & 2.82 & SULFONAMIDES.AND.TRIMETHOPRIM\\
+    2.95 & 1.6 & 5.07 & BENZYLPENICILLIN\\
+    6.69 & 4.09 & 10.68 & IOXITALAMIC.ACID\\
+    6.45 & 2.99 & 13.29 & TRANEXAMIC.ACID\\
+    4.07 & 2.22 & 7.06 & CEFADROXIL\\
+    3.15 & 1.79 & 5.26 & AMINO.ACIDS\\
+    2.98 & 1.77 & 4.8 & CEFEPIM\\
+    3.53 & 1.98 & 5.96 & CHLORAMPHENICOL\\
+    3.04 & 1.78 & 4.92 & CEFAZOLIN\\
+    8.13 & 4.39 & 14.65 & PHENOXYMETHYLPENICILLIN\\
+    2.59 & 1.21 & 5 & CEFRADIN\\
+    5.01 & 2.63 & 9.1 & BUPIVACAIN\\
+    18.84 & 7.15 & 53.48 & ATRACURIUM\\
+    3.1 & 1.77 & 5.15 & CEFTIZOXIM\\
+    2.94 & 1.53 & 5.25 & IMIPENEM.CILASTATIN\\
+    2.31 & 1.17 & 4.21 & L..ORNITHIN.L.ASPARTAT\\
+    2.18 & 1.17 & 3.79 & OMEPRAZOL\\
+    4.47 & 2.11 & 8.81 & OXALIPLATIN\\
+    3.39 & 1.46 & 7.29 & PROPOFOL\\
+    5.76 & 2.73 & 11.53 & RANITIDIN\\
+    2.05 & 1.17 & 3.39 & RINGER.LACTAT\\
+  \end{tabular}
+  \end{center}
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Analyse Shock and Reaction Anaphylactic -Result 5 year (2010-2014)}
+ 
+
+<<fig=T,echo=F,fig.align="center",out.width="71%",message=F, warning=F>>=
+OR95=function(mod){
+  return(exp(cbind(OR=coef(mod), confint(mod)))%>% #khoang tin cay 95% cua ROR tinh toan tu mo hinh
+           as.data.frame() %>% #chuyen thanh data frame de doi ten bien
+           setNames(., c("OR", "lower","upper")))
+}
+read.csv2("tinh ROR SPV -2010-2014- Linh.csv") %>% 
+  mutate(tuoi=as.numeric(tuoi)) %>% 
+  group_by(case, tuoi ,gioi,cefotaxim,ceftriaxon,ceftazidim,paracetamol,cefoperazon,
+             amoxicillin,diclofenac,ampicillin,lidocain,cefalexin,cefuroxim,metronidazol,
+             ciprofloxacin,gentamicin,chymotrypsin,iobitridol,iopromid,streptomycin,oxytocin,
+             SULFONAMIDES.AND.TRIMETHOPRIM,benzylpenicillin,ioxitalamic.acid,vancomycin,
+             tranexamic.acid,glucose,tetanus.antitoxin,cefadroxil,amino.acids,nacl,fentanyl,
+             cefepim,chloramphenicol,Cefazolin,phenoxymethylpenicillin,Cefradin,Bupivacain,
+             Atracurium,amikacin,ceftizoxim,imipenem.cilastatin,l..ornithin.l.aspartat,
+             levofloxacin,methylprednisolon,omeprazol,oxaliplatin,propofol,ranitidin,
+             ringer.lactat,salbutamol) %>%   tally() %>%
+  glm(case ~  tuoi +gioi+cefotaxim+ceftriaxon+ceftazidim+paracetamol+cefoperazon+
+        amoxicillin+diclofenac+ampicillin+lidocain+cefalexin+cefuroxim+metronidazol+
+        ciprofloxacin+gentamicin+chymotrypsin+iobitridol+iopromid+streptomycin+oxytocin+
+        SULFONAMIDES.AND.TRIMETHOPRIM+benzylpenicillin+ioxitalamic.acid+vancomycin+
+        tranexamic.acid+glucose+tetanus.antitoxin+cefadroxil+amino.acids+nacl+fentanyl+
+        cefepim+chloramphenicol+Cefazolin+phenoxymethylpenicillin+Cefradin+Bupivacain+
+        Atracurium+amikacin+ceftizoxim+imipenem.cilastatin+l..ornithin.l.aspartat+
+        levofloxacin+methylprednisolon+omeprazol+oxaliplatin+propofol+ranitidin+
+        ringer.lactat+salbutamol ,., weights = n,family = binomial(link="logit"))  %>% 
+  OR95() %>% as.data.frame() %>% 
+
+  setNames(., c("OR", "lower","upper")) %>% #doi ten bien de hien thi trong bang du lieu
+  mutate(Cepha=toupper(rownames(.)))%>%  # them ten bien Cepha
+  filter(between(row_number(), 4, n())) %>% # tinh tu dong thu 4 do them bien Age1
+  
+  ggplot( aes(x=Cepha, y=OR)  ) + 
+  geom_errorbar(aes(ymin=lower, ymax=upper), colour="black", width=.2) +
+  geom_point( size=3, shape=21, fill="white") + # 21 is filled circle
+  xlab("Drugs induced Anaphylaxis (Freq Minimum=3) ") +
+  ylab("Odd Ratios Adjusted") +
+  ggtitle(paste("ROR (Adj) of Drugs induced Shock \n period Jan2010-Dec2014")) +
+  geom_hline(yintercept=1, color="red", alpha=0.4,lwd=1.5) +
+  coord_flip(ylim=c(0,10))+
+  theme_bw()  
+  
+@
+
+\end{frame}
+\begin{frame}{Analyse of Anaphylaxis: Group Betalactams -Signal Generation 2010}
+ 
+ \includegraphics[width=0.6\paperwidth]{20102010AnaphylaxisSignalBetalactam.png}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Group Betalactams -Signal Generation 2010-2011}
+  \includegraphics[width=0.6\paperwidth]{20102011AnaphylaxisSignalBetalactam.png}
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Group Betalactams -Signal Generation 2010-2012}
+ 
+\includegraphics[width=0.6\paperwidth]{20102012AnaphylaxisSignalBetalactam.png}
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Group Betalactams -Signal Generation 2010-2013}
+
+\includegraphics[width=0.6\paperwidth]{20102013AnaphylaxisSignalBetalactam.png}
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Group Betalactams -Signal Generation 2010-2014}
+
+\includegraphics[width=0.6\paperwidth]{20102014AnaphylaxisSignalBetalactam.png}
+
+\end{frame}
+%-------------------------------------------------------------
+\begin{frame}{Analyse of Anaphylaxis: Group Betalactams -Signal Generation 2010-2015}
+
+  \begin{quote}
+      \textbf{To be continued for a publication...}
+  \end{quote}
+\end{frame}
+%-------------------------------------------------------------
+%-------------------------------------------------------------
+% \begin{frame}{Analyse of Anaphylaxis: Example of Stratification of Group Cephalosporins - Which high-risk Drug? }
+% \includegraphics[width=0.6\paperwidth]{ORadjStratificationCephalosporinInducedShockJan2010Dec2010.png}
+% \end{frame}
+%   %-------------------------------------------------------------
+% \begin{frame}{Analyse of Anaphylaxis: Example of Stratification of Group Cephalosporins - Which high-risk Drug? }
+% \includegraphics[width=0.6\paperwidth]{ORadjStratificationCephalosporinInducedShockJan2010Dec2011.png}
+% \end{frame}
+%   %-------------------------------------------------------------
+% \begin{frame}{Analyse of Anaphylaxis: Example of Stratification of Group Cephalosporins - Which high-risk Drug? }
+% \includegraphics[width=0.6\paperwidth]{ORadjStratificationCephalosporinInducedShockJan2010Dec2012.png}
+% \end{frame}
+%   %-------------------------------------------------------------
+% \begin{frame}{Analyse of Anaphylaxis: Example of Stratification of Group Cephalosporins - Which high-risk Drug? }
+% \includegraphics[width=0.6\paperwidth]{ORadjStratificationCephalosporinInducedShockJan2010Dec2013.png}
+% \end{frame}
+%   %-------------------------------------------------------------
+% \begin{frame}{Analyse of Anaphylaxis: Example of Stratification of Group Cephalosporins - Which high-risk Drug? }
+% \includegraphics[width=0.6\paperwidth]{ORadjStratificationCephalosporinInducedShockJan2010Dec2014.png}
+% \end{frame}
+%   %-------------------------------------------------------------
+% \begin{frame}{}
+% Other Approach by R analyssis: Changpoint Analysis...
+% \includegraphics[width=0.8\paperwidth]{ChangepointDetectionIn20102015PELT.png}
+% \end{frame}
+
+%-------------------------------------------------------------
+%     Section 5  :Apply New Method for under-reporting :Laboratory signals
+%-------------------------------------------------------------
+  \section[]{Apply New Method for under-reporting :Laboratory signals}
+%-------------------------------------------------------------
+ \begin{frame}{Laboratory signals : Sreening Hepatic Enzym Disfunction in a Hospital 2015}
+  \includegraphics[width=0.7\paperwidth]{XetNghiemGanBenhVienHuuNghi2015.png}
+
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Laboratory signals : Sreening Hepatic Enzym Disfunction in a Hospital 2015}
+    \textbf{Research Design}
+    
+    \begin{exampleblock}{ Subjects for study}
+       \begin{itemize}
+        \item Result of all Laboratory signals of hospital from Jan2015 to Dec2015
+        \item Original Medical Records of Patient suspected Drug-induced hepatitis 
+  
+        \end{itemize}
+     \end{exampleblock}
+     
+    \begin{block}{Method}
+       Retrospective description with the application of RUCAM Scale - a specific Scale for imputation Drug-Hepatitis (Roussel-Uclaf Causality Assessment Method)
+     \end{block}
+     
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Laboratory signals : Sreening Hepatic Enzym Disfunction in a Hospital 2015}
+ 
+  \begin{block}{Principal Criteria}
+       \begin{itemize}
+        \item Number of patient suspect with inclusion criteria
+        \item Evaluation the causality of Drug - Hepatitis (DILI) according to RUCAM Scale
+        \item Ratio DILI case/In-patient number and DILI case/Laboratory Result 
+        \item Description of Severity and Drugs in DILI Cases
+  
+        \end{itemize}
+       
+  \end{block}
+  
+     
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Sreening Hepatic Enzym Disfunction in a Hospital 2015: Selection Criteria with Results}
+ 
+ \includegraphics[width=0.85\paperwidth]{DILIbvHuuNghi2015.png}
+ 
+ 
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Sreening Hepatic Enzym Disfunction in a Hospital 2015: Patients in 37 DILI Case}
+ 
+   \begin{block}{Age Patient}
+      Mean Age = 74.1[65.0 - 83.2] 
+      
+      
+     \end{block}
+  \begin{block}{Sex of Patient}
+      
+      Man/Woman = 91.9 \%  equiv. (34/3)
+      
+     \end{block}
+  \begin{block}{Number of Drug using in Medical Records}
+      
+      11.4 Drugs/patient (equiv. 423 Drugs/ 37 Patients)
+      
+     \end{block}
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Sreening Hepatic Enzym Disfunction in a Hospital 2015: List of all Drug suspect with RUCAMscore minimum = 3}
+ 
+ \includegraphics[width=0.85\paperwidth]{DILIDrugHuuNghiHospital.png}
+ 
+ 
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Sreening Hepatic Enzym Disfunction in a Hospital 2015: Which drug really involved in DILI Case}
+ 
+ \includegraphics[width=0.85\paperwidth]{DILIDrugHuuNghiHospitalWordcloud.png}
+ 
+ 
+\end{frame}
+%-------------------------------------------------------------
+ \begin{frame}{Sreening Hepatic Enzym Disfunction in a Hospital 2015: ATC Group..}
+ 
+ 
+\begin{center}
+\begin{tabular}{ c c c c }
+  &ATC   & ATC.Group & NumberOfCase\\
+1 & J01M & Quinolon  & 5\\
+2 & J01D & Cephalosporin, Carbapenem & 3\\
+3 & J01C & Betalactam,  group penicillin  & 2\\
+4 & J01F & macrolid  & 2\\
+5 & J01X & Other Anti-infective & 2\\
+6 & N05B & Anxiolytics & 3\\
+7 & N02B & NSAID+Paracetamol & 3\\
+8 & B01A &  ANTITHROMBOTIC AGENTS & 2\\
+9 & L01X & OTHER ANTINEOPLASTIC AGENTS & 2\\
+10 &  & Other & 9\\  
+\end{tabular}
+\end{center}
+
+
+ 
+\end{frame}
+
+\end{document}
