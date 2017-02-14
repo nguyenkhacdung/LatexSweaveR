@@ -1,0 +1,41 @@
+\documentclass[edit,11pt,ChapStyle3,twoside,doubleinterligne]{manuscritThese}
+%COMMAND
+
+\newcommand{\anglais}[1]{\selectlanguage{english}#1\selectlanguage{frenchb}}
+%----------------------------
+\usepackage[english,frenchb]{babel}
+\usepackage[backend=bibtex]{biblatex}
+\bibliography{BibTex.bib} % or
+%\addbibresource{BibLaTex.bib}%chua xoa file PDF dinh kem
+
+\usepackage{FontsThese}
+\usepackage[ED=SDU2E-Ast, Ets=UT3]{tlsflyleaf}
+
+\usepackage{amsmath,amssymb,amsthm,amsfonts}		% maths
+\usepackage{pifont,stmaryrd,wasysym}	% fonts
+\usepackage{float,subfigure,graphicx}	% figures
+
+
+\usepackage{multirow,array,footnote}
+\usepackage{lettrine,soul}
+\usepackage{lscape}					% affichage paysage
+\usepackage{textpos}					% positionnement du logo
+\usepackage{phaistos}
+
+\begin{document}
+%	\makeflyleaf
+\input{Prelude/pageTitre}
+\input{Prelude/pagesResumes}
+%\input{Prelude/dedicace}
+%\input{Prelude/remerciements}
+%	
+Random citation \cite {thanh_socialization_2014} embeddeed in text.\cite{petitclerc_quantitative_1976}\\
+asdfiuhasdf\cite{kimura_pharmacovigilance_2011}
+
+
+\newpage
+
+\printbibliography
+
+	
+\end{document}
